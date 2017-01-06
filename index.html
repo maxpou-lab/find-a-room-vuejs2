@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>VueJS2 sample</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.7/semantic.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
+</head>
+
+<body>
+
+  <h1 class="ui center aligned header">hello vuejs</h1>
+
+  <div id="app">
+
+    <div class="ui container center">
+      <filter-button
+        v-for="filterdata in availableFilters"
+        v-bind:filterdata="filterdata"
+        v-on:filterpropertiesby="setnewfilter(filterdata)"
+      ></filter-button>
+    </div>
+
+    <div class="ui cards three column doubling grid container">
+      <property-item v-for="property in showedProperties(properties)"
+        v-bind:property="property">
+      </property-item>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
