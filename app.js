@@ -56,6 +56,11 @@ Vue.component('property-list-item', {
           <p></p>
         </div>
         <div class="extra">
+          <div class="ui right floated primary button">
+            {{ property.price }}
+            <i class="euro icon"></i>
+            <i class="right chevron icon"></i>
+          </div>
           <div class="ui label" v-if="property.bonus.hasFreeWifi"><i class="wifi icon"></i> Free WIFI</div>
           <div class="ui label" v-if="property.bonus.hasFreeBreakfast"><i class="coffee icon"></i> Free Breakfast</div>
           <div class="ui label" v-if="property.bonus.hasTv"><i class="desktop icon"></i> TV</div>
@@ -67,14 +72,19 @@ Vue.component('property-list-item', {
 })
 
 Vue.component('filter-button', {
-  props: ['filterdata'],
+  props: ['filterdata', 'activefilters'],
   template: `
-    <button class="ui icon=button" v-on:click='filterProperties'>
+    <button class="ui icon button" v-bind:class="{active: isActive}" v-on:click='filterProperties'>
       <i class="icon" v-bind:class="this.filterdata.icon"></i>
     </button>`,
   methods: {
     filterProperties: function () {
       this.$emit('filterpropertiesby', this.filterdata.filtername)
+    }
+  },
+  computed: {
+    isActive: function () {
+      return (this.activefilters.indexOf(this.filterdata.filtername) !== -1)
     }
   }
 })
