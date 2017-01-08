@@ -1,5 +1,4 @@
-function generateProperty()
-{
+function generateProperty () {
   return {
     'id': faker.random.uuid(),
     'name': faker.name.findName(),
@@ -21,7 +20,7 @@ function generateProperty()
   }
 }
 
-var properties = {};
+var properties = {}
 for (var i = 0; i < 30; i++) {
   properties[i] = generateProperty()
 }

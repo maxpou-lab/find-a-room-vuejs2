@@ -6,7 +6,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.7/semantic.min.css" rel="stylesheet">
-  <link href="css/style.css" rel="stylesheet">
   <script src="https://unpkg.com/vue/dist/vue.js"></script>
   <script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
 </head>
@@ -17,6 +16,18 @@
 
   <div id="app">
 
+    <div class="ui container three item menu">
+      <a class="item"
+        v-bind:class="{ active: viewMode === 'cards' }"
+        v-on:click="changeViewMode('cards')">cards</a>
+      <a class="item"
+        v-bind:class="{ active: viewMode === 'list' }"
+        v-on:click="changeViewMode('list')">list</a>
+      <a class="item"
+        v-bind:class="{ active: viewMode === 'map' }"
+        v-on:click="changeViewMode('map')">map</a>
+    </div>
+
     <div class="ui container center">
       <filter-button
         v-if="properties"
@@ -26,20 +37,29 @@
       ></filter-button>
 
       <sorter-dropdown
-        v-if="properties"
+        v-if="viewMode !== 'map'"
         v-on:sortproperties="sortproperties"
       ></sorter-dropdown>
-
     </div>
 
     <br>
 
-    <div class="ui cards three column doubling grid container">
-      <property-item v-for="property in showedProperties(properties)"
-        v-bind:property="property">
-      </property-item>
-    </div>
+    <div class="container">
+      <div class="ui divided items" v-if="viewMode === 'list'">
+        <property-list-item
+          v-for="property in showedProperties(properties)"
+          v-bind:property="property"
+        ></property-list-item>
+      </div>
 
+      <div class="ui cards three column doubling grid" v-if="viewMode === 'cards'">
+        <property-card-item
+          v-for="property in showedProperties(properties)"
+          v-bind:property="property"
+        ></property-card-item>
+      </div>
+
+    </div>
   </div>
 
   <script src="app.js"></script>

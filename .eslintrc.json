@@ -10,7 +10,8 @@
     ],
     "globals": {
         "Vue": true,
-        "QueryString": true
+        "QueryString": true,
+        "faker": true
     },
     "rules": {
       "no-new": 0,

@@ -1,24 +1,23 @@
 // 'words.json'
 var dataUrl = 'faker/generated-data-30.json'
 
-let freeWifi = Vue.filter('have-free-wifi', function (property) {
+Vue.filter('have-free-wifi', function (property) {
   return property.bonus.hasFreeWifi
 })
 
-let freeBreakfast = Vue.filter('have-free-breakfast', function (property) {
+Vue.filter('have-free-breakfast', function (property) {
   return property.bonus.hasFreeBreakfast
 })
 
-let tv = Vue.filter('have-tv', function (property) {
+Vue.filter('have-tv', function (property) {
   return property.bonus.hasTv
 })
 
-let bar = Vue.filter('have-bar', function (property) {
+Vue.filter('have-bar', function (property) {
   return property.bonus.hasBar
 })
 
-Vue.component('property-item', {
-  props: ['property'],
+Vue.component('property-card-item', {
   template: `
     <div class="card">
       <div class="content">
@@ -41,7 +40,30 @@ Vue.component('property-item', {
         {{ property.price }}
         <i class="euro icon"></i>
       </div>
-    </div>`
+    </div>`,
+  props: ['property']
+})
+
+Vue.component('property-list-item', {
+  template: `
+    <div class="item">
+      <div class="content">
+        <a class="header">{{ property.name }}</a>
+        <div class="meta">
+          <span class="cinema">Union Square 14</span>
+        </div>
+        <div class="description">
+          <p></p>
+        </div>
+        <div class="extra">
+          <div class="ui label" v-if="property.bonus.hasFreeWifi"><i class="wifi icon"></i> Free WIFI</div>
+          <div class="ui label" v-if="property.bonus.hasFreeBreakfast"><i class="coffee icon"></i> Free Breakfast</div>
+          <div class="ui label" v-if="property.bonus.hasTv"><i class="desktop icon"></i> TV</div>
+          <div class="ui label" v-if="property.bonus.hasBar"><i class="bar icon"></i> Bar</div>
+        </div>
+      </div>
+    </div>`,
+  props: ['property']
 })
 
 Vue.component('filter-button', {
@@ -74,20 +96,18 @@ Vue.component('sorter-dropdown', {
   },
   methods: {
     changeSorter: function () {
-      console.log('event change', this.selected)
       this.$emit('sortproperties', this.selected)
     }
   }
 })
 
-
 new Vue({
   el: '#app',
   data: {
     properties: [],
+    viewMode: 'cards',
     curentSorter: null,
     availableSorter: [
-
     ],
     activeFilters: [],
     availableFilters: [
@@ -108,7 +128,7 @@ new Vue({
   },
   methods: {
     showedProperties: function (properties) {
-      var showedProperties = this.properties;
+      var showedProperties = this.properties
 
       // filters
       for (let activeFilter in this.activeFilters) {
@@ -140,6 +160,9 @@ new Vue({
     },
     sortproperties: function (newSorter) {
       this.curentSorter = newSorter
+    },
+    changeViewMode: function (newViewMode) {
+      this.viewMode = newViewMode
     }
   },
   computed: {
