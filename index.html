@@ -24,7 +24,15 @@
         v-bind:filterdata="filterdata"
         v-on:filterpropertiesby="addnewfilter(filterdata)"
       ></filter-button>
+
+      <sorter-dropdown
+        v-if="properties"
+        v-on:sortproperties="sortproperties"
+      ></sorter-dropdown>
+
     </div>
+
+    <br>
 
     <div class="ui cards three column doubling grid container">
       <property-item v-for="property in showedProperties(properties)"

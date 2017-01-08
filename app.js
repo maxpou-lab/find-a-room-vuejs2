@@ -57,10 +57,38 @@ Vue.component('filter-button', {
   }
 })
 
+Vue.component('sorter-dropdown', {
+  template: `
+    <select class="ui fluid search dropdown"
+      v-on:click='changeSorter'
+      v-model="selected">
+      <option>Sort by</option>
+      <option value="price">Price</option>
+      <option value="distance">Distance</option>
+    </select>
+  `,
+  data: () => {
+    return {
+      selected: null
+    }
+  },
+  methods: {
+    changeSorter: function () {
+      console.log('event change', this.selected)
+      this.$emit('sortproperties', this.selected)
+    }
+  }
+})
+
+
 new Vue({
   el: '#app',
   data: {
     properties: [],
+    curentSorter: null,
+    availableSorter: [
+
+    ],
     activeFilters: [],
     availableFilters: [
       {
@@ -81,10 +109,21 @@ new Vue({
   methods: {
     showedProperties: function (properties) {
       var showedProperties = this.properties;
+
+      // filters
       for (let activeFilter in this.activeFilters) {
         showedProperties = showedProperties.filter(
           Vue.filter(this.activeFilters[activeFilter])
         )
+      }
+
+      // sorter
+      if (this.curentSorter === 'distance') {
+        showedProperties = showedProperties.slice().sort(
+          (a, b) => b.distance - a.distance)
+      } else if (this.curentSorter === 'price') {
+        showedProperties = showedProperties.slice().sort(
+          (a, b) => b.price - a.price)
       }
 
       return showedProperties
@@ -98,10 +137,12 @@ new Vue({
       } else {
         this.activeFilters.push(newFilterName)
       }
+    },
+    sortproperties: function (newSorter) {
+      this.curentSorter = newSorter
     }
   },
   computed: {
-
   },
   created: function () {
     this.$http.get(dataUrl).then((response) => {
