@@ -61,7 +61,7 @@ new Vue({
   el: '#app',
   data: {
     properties: [],
-    activeFilter: null,
+    activeFilters: [],
     availableFilters: [
       {
         'filtername': 'have-free-wifi',
@@ -80,18 +80,28 @@ new Vue({
   },
   methods: {
     showedProperties: function (properties) {
-      if (this.activeFilter) {
-        return properties.filter(
-          Vue.filter(this.activeFilter)
+      var showedProperties = this.properties;
+      for (let activeFilter in this.activeFilters) {
+        showedProperties = showedProperties.filter(
+          Vue.filter(this.activeFilters[activeFilter])
         )
       }
-      return this.properties
+
+      return showedProperties
     },
-    setnewfilter: function (newFilter) {
-      this.activeFilter = this.activeFilter === newFilter.filtername
-        ? null
-        : newFilter.filtername
+    addnewfilter: function (newFilter) {
+      let newFilterName = newFilter.filtername
+      let index = this.activeFilters.indexOf(newFilterName)
+
+      if (index > -1) {
+        this.activeFilters.splice(index, 1)
+      } else {
+        this.activeFilters.push(newFilterName)
+      }
     }
+  },
+  computed: {
+
   },
   created: function () {
     this.$http.get(dataUrl).then((response) => {

@@ -19,9 +19,10 @@
 
     <div class="ui container center">
       <filter-button
+        v-if="properties"
         v-for="filterdata in availableFilters"
         v-bind:filterdata="filterdata"
-        v-on:filterpropertiesby="setnewfilter(filterdata)"
+        v-on:filterpropertiesby="addnewfilter(filterdata)"
       ></filter-button>
     </div>
 
