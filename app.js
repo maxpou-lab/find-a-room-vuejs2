@@ -92,7 +92,7 @@ Vue.component('filter-button', {
 Vue.component('sorter-dropdown', {
   template: `
     <select class="ui fluid search dropdown"
-      v-on:click='changeSorter'
+      v-on:change='changeSorter'
       v-model="selected">
       <option>Sort by</option>
       <option value="price">Price</option>
