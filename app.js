@@ -35,13 +35,31 @@ Vue.component('property-card-item', {
         <div class="description">
          {{ property.description }}
         </div>
+        <div>
+          <label>
+            <input type="checkbox"
+              v-model="isCompare"
+              :disabled="comparedproperties.length > 2 && !isCompare">
+            compare ({{comparedproperties.length}}/3)
+          </label>
+        </div>
       </div>
       <div class="ui bottom attached button">
         {{ property.price }}
         <i class="euro icon"></i>
       </div>
     </div>`,
-  props: ['property']
+  props: ['property', 'comparedproperties'],
+  data: () => {
+    return {
+      isCompare: false
+    }
+  },
+  watch: {
+    isCompare: function () {
+      this.$emit('updatecompare', this.property)
+    }
+  }
 })
 
 Vue.component('property-list-item', {
@@ -69,6 +87,49 @@ Vue.component('property-list-item', {
       </div>
     </div>`,
   props: ['property']
+})
+
+Vue.component('property-compare-table', {
+  template: `
+    <table class="ui definition table">
+      <thead>
+        <tr>
+          <th></th>
+          <th v-for="property in properties">{{ property.name }}</th>
+      </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Distance</td>
+          <td v-for="property in properties">{{ property.distance }}km</td>
+        </tr>
+        <tr>
+          <td>WIFI</td>
+          <td v-for="property in properties">
+            <span v-if="property.bonus.hasFreeWifi"><i class="checkmark icon"></i></span>
+            <span v-if="!property.bonus.hasFreeWifi"><i class="remove icon"></i></span>
+          </td>
+        </tr>
+        <tr>
+          <td>Bar</td>
+          <td v-for="property in properties">
+            <span v-if="property.bonus.hasBar"><i class="checkmark icon"></i></span>
+            <span v-if="!property.bonus.hasBar"><i class="remove icon"></i></span>
+          </td>
+        </tr>
+        <tr>
+          <td></td>
+          <td v-for="property in properties">
+            <div class="ui right floated primary button">
+              {{ property.price }}
+              <i class="euro icon"></i>
+              <i class="chevron icon"></i>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+    </table>`,
+  props: ['properties']
 })
 
 Vue.component('filter-button', {
@@ -117,8 +178,6 @@ new Vue({
     properties: [],
     viewMode: 'cards',
     curentSorter: null,
-    availableSorter: [
-    ],
     activeFilters: [],
     availableFilters: [
       {
@@ -134,7 +193,8 @@ new Vue({
         'filtername': 'have-bar',
         'icon': 'bar'
       }
-    ]
+    ],
+    comparedProperties: []
   },
   methods: {
     showedProperties: function (properties) {
@@ -173,6 +233,15 @@ new Vue({
     },
     changeViewMode: function (newViewMode) {
       this.viewMode = newViewMode
+    },
+    updateCompare: function (property) {
+      let index = this.comparedProperties.indexOf(property)
+
+      if (index > -1) {
+        this.comparedProperties.splice(index, 1)
+      } else {
+        this.comparedProperties.push(property)
+      }
     }
   },
   computed: {

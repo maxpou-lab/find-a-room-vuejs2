@@ -16,7 +16,7 @@
 
   <div id="app">
 
-    <div class="ui container three item menu">
+    <div class="ui container four item menu">
       <a class="item"
         v-bind:class="{ active: viewMode === 'cards' }"
         v-on:click="changeViewMode('cards')">cards</a>
@@ -26,11 +26,15 @@
       <a class="item"
         v-bind:class="{ active: viewMode === 'map' }"
         v-on:click="changeViewMode('map')">map</a>
+      <a class="item"
+        v-if="comparedProperties.length > 1"
+        v-bind:class="{ active: viewMode === 'compare' }"
+        v-on:click="changeViewMode('compare')">comparison</a>
     </div>
 
     <div class="ui container center">
       <filter-button
-        v-if="properties"
+        v-if="viewMode !== 'compare'"
         v-for="filterdata in availableFilters"
         v-bind:filterdata="filterdata"
         v-bind:activeFilters="activeFilters"
@@ -38,7 +42,7 @@
       ></filter-button>
 
       <sorter-dropdown
-        v-if="viewMode !== 'map'"
+        v-if="viewMode !== 'map' && viewMode !== 'compare'"
         v-on:sortproperties="sortproperties"
       ></sorter-dropdown>
     </div>
@@ -57,7 +61,15 @@
         <property-card-item
           v-for="property in showedProperties(properties)"
           v-bind:property="property"
+          v-bind:comparedproperties="comparedProperties"
+          v-on:updatecompare="updateCompare(property)"
         ></property-card-item>
+      </div>
+
+      <div class="ui" v-if="viewMode === 'compare'">
+        <property-compare-table
+          v-bind:properties="comparedProperties"
+        ></property-compare-table>
       </div>
 
     </div>
