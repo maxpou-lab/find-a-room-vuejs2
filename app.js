@@ -21,7 +21,7 @@ Vue.component('property-card-item', {
   template: `
     <div class="card">
       <div class="content">
-        <img class="right floated mini ui image">
+        <img class="floated mini ui image">
         <div class="header">
           {{ property.name }}
         </div>
@@ -39,8 +39,9 @@ Vue.component('property-card-item', {
           <label>
             <input type="checkbox"
               v-model="isCompare"
-              :disabled="comparedproperties.length > 2 && !isCompare">
-            compare ({{comparedproperties.length}}/3)
+              :disabled="comparedproperties.length > 2 && !isCompare"
+              v-on:click="$emit('updatecompare', property)">
+            compare ({{ comparedproperties.length }}/3)
           </label>
         </div>
       </div>
@@ -50,14 +51,9 @@ Vue.component('property-card-item', {
       </div>
     </div>`,
   props: ['property', 'comparedproperties'],
-  data: () => {
-    return {
-      isCompare: false
-    }
-  },
-  watch: {
+  computed: {
     isCompare: function () {
-      this.$emit('updatecompare', this.property)
+      return (this.comparedproperties.indexOf(this.property) !== -1)
     }
   }
 })
@@ -120,9 +116,8 @@ Vue.component('property-compare-table', {
         <tr>
           <td></td>
           <td v-for="property in properties">
-            <div class="ui right floated primary button">
-              {{ property.price }}
-              <i class="euro icon"></i>
+            <div class="ui floated primary button">
+              {{ property.price }} €
               <i class="chevron icon"></i>
             </div>
           </td>
