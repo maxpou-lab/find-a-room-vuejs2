@@ -1,5 +1,5 @@
 // 'words.json'
-var dataUrl = 'faker/generated-data-30.json'
+const dataUrl = 'faker/generated-data-30.json'
 
 Vue.filter('have-free-wifi', function (property) {
   return property.bonus.hasFreeWifi
@@ -193,29 +193,37 @@ new Vue({
   },
   methods: {
     showedProperties: function (properties) {
-      var showedProperties = this.properties
+      function recursiveFilters (data, arrayFilters, index = 0) {
+        if (arrayFilters.length === 0) {
+          return data
+        }
+        if (index === arrayFilters.length - 1) {
+          return data.filter(Vue.filter(arrayFilters[index]))
+        }
+        return recursiveFilters(data.filter(Vue.filter(arrayFilters[index])), arrayFilters, (index + 1))
+      }
+
+      function propertiesSorter (properties, sorter) {
+        if (sorter === 'distance') {
+          return properties.slice().sort((a, b) => b.distance - a.distance)
+        } else if (sorter === 'price') {
+          return properties.slice().sort((a, b) => b.price - a.price)
+        } else {
+          return properties
+        }
+      }
 
       // filters
-      for (let activeFilter in this.activeFilters) {
-        showedProperties = showedProperties.filter(
-          Vue.filter(this.activeFilters[activeFilter])
-        )
-      }
+      const filteredProperties = recursiveFilters(properties, this.activeFilters)
 
       // sorter
-      if (this.curentSorter === 'distance') {
-        showedProperties = showedProperties.slice().sort(
-          (a, b) => b.distance - a.distance)
-      } else if (this.curentSorter === 'price') {
-        showedProperties = showedProperties.slice().sort(
-          (a, b) => b.price - a.price)
-      }
+      const sorteredProperties = propertiesSorter(filteredProperties, this.curentSorter)
 
-      return showedProperties
+      return sorteredProperties
     },
     addnewfilter: function (newFilter) {
-      let newFilterName = newFilter.filtername
-      let index = this.activeFilters.indexOf(newFilterName)
+      const newFilterName = newFilter.filtername
+      const index = this.activeFilters.indexOf(newFilterName)
 
       if (index > -1) {
         this.activeFilters.splice(index, 1)
@@ -230,7 +238,7 @@ new Vue({
       this.viewMode = newViewMode
     },
     updateCompare: function (property) {
-      let index = this.comparedProperties.indexOf(property)
+      const index = this.comparedProperties.indexOf(property)
 
       if (index > -1) {
         this.comparedProperties.splice(index, 1)
@@ -238,8 +246,6 @@ new Vue({
         this.comparedProperties.push(property)
       }
     }
-  },
-  computed: {
   },
   created: function () {
     this.$http.get(dataUrl).then((response) => {
